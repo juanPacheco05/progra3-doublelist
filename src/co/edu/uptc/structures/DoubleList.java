@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import co.edu.uptc.util.Node;
+
 public class DoubleList<T> implements List<T> {
     private Node<T> head;
     private Node<T> tail;
@@ -68,10 +70,51 @@ public class DoubleList<T> implements List<T> {
 		return false;
 	}
 	@Override
-	public boolean addAll(int index, Collection<? extends T> c) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+public boolean addAll(int index, Collection<? extends T> c) {
+    if (c == null)
+        throw new NullPointerException("Collection cannot be null");
+    if (index < 0 || index > size)
+        throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+    if (c.isEmpty())
+        return false;
+
+    for (T element : c) {
+        if (element == null)
+            throw new NullPointerException("Collection contains a null element");
+    }
+
+    Node<T> next = null;
+    Node<T> previous = null;
+    if (index == size) {
+        previous = tail;
+    } else {
+        next = head;
+        for (int i = 0; i < index; i++) {
+            next = next.getNext();
+        }
+        previous = next.getPrevious();
+    }
+
+    for (T element : c) {
+        Node<T> newNode = new Node<>(element);
+        newNode.setPrevious(previous);
+        newNode.setNext(next);
+        if (previous == null) {
+            head = newNode;
+        } else {
+            previous.setNext(newNode);
+        }
+        if (next == null) {
+            tail = newNode;
+        } else {
+            next.setPrevious(newNode);
+        }
+        previous = newNode;
+        size++;
+    }
+
+    return true;
+}
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		// TODO Auto-generated method stub
