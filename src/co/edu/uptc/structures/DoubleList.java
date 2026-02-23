@@ -1,6 +1,5 @@
 package co.edu.uptc.structures;
 
-import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -147,10 +146,39 @@ public boolean add(T e) {
 	}
 
 	@Override
-	public boolean containsAll(Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public boolean containsAll(Collection<?> c) {
+        if (c == null) {
+            throw new NullPointerException("The specified collection is null");
+        }
+        
+        for (Object element : c) {
+            if (element == null) {
+                throw new NullPointerException("The collection contains null elements");
+            }
+            
+            boolean found = false;
+            Node<T> current = head;
+            
+            while (current != null) {
+                try {
+                    T nodeValue = current.getValue();
+                    if (element.equals(nodeValue)) {
+                        found = true;
+                        break;
+                    }
+                } catch (ClassCastException e) {
+                    throw new ClassCastException("The element type is not compatible with this collection");
+                }
+                current = current.getNext();
+            }
+            
+            if (!found) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
 
 	@Override
 	public boolean addAll(Collection<? extends T> c) {
