@@ -458,8 +458,85 @@ public boolean addAll(int index, Collection<? extends T> c) {
 
 	@Override
 	public ListIterator<T> listIterator(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("Index: " + index);
+        }
+        return new ListIterator<T>() {
+            private Node<T> cursor = initializeCursor();
+            private int cursorIndex = index;
+            private Node<T> initializeCursor() {
+                if (index == size) {
+                    return null;
+                }
+                Node<T> temp;
+                if (index < size / 2) {
+                    temp = head;
+                    for (int i = 0; i < index; i++) {
+                        temp = temp.getNext();
+                    }
+                } else {
+                    temp = tail;
+                    for (int i = size - 1; i > index; i--) {
+                        temp = temp.getPrevious();
+                    }
+                }
+                return temp;
+           }
+            @Override
+            public boolean hasNext() {
+                return cursor != null;
+            }
+            @Override
+            public T next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                T value = cursor.getValue();
+                cursor = cursor.getNext();
+                cursorIndex++;
+                return value;
+            }
+            @Override
+            public boolean hasPrevious() {
+                if (cursor == null) {
+                    return size > 0;
+                }
+                return cursor.getPrevious() != null;
+            }
+            @Override
+            public T previous() {
+                if (!hasPrevious()) {
+                    throw new NoSuchElementException();
+                }
+                if (cursor == null) {
+                    cursor = tail;
+                } else {
+                    cursor = cursor.getPrevious();
+                }
+                cursorIndex--;
+                return cursor.getValue();
+           }
+            @Override
+            public int nextIndex() {
+                return cursorIndex;
+            }
+            @Override
+            public int previousIndex() {
+                return cursorIndex - 1;
+            }
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+           }
+            @Override
+            public void set(T e) {
+                throw new UnsupportedOperationException();
+            }
+            @Override
+            public void add(T e) {
+                throw new UnsupportedOperationException();
+            }
+        };
 	}
 
 	@Override
